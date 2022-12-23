@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+    environment {
+        VERSION_APP = '0.0.1'
+        APP = "demo-app"
+        NAMESPACE = 'default'
+    }
+    tools {
+        maven 'maven 3.8.6'
+    }
+
+    stages {
+
+        stage('Deploy demo App') {
+            steps {
+                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'Token_Kubernetes', serverUrl: 'https://172.16.0.152:18443']]) {
+                        sh '''
+                            if kubectl get deployments | grep demo-app
+                                then
+                                  kubectl set image deployment demo-app-back-deployment-jenkis demo-app-back-jenkis=chapumix/demo-app:${VERSION_APP}
+                                  kubectl rollout restart deployment demo-app-back-deployment-jenkis
+                                else
+                                  kubectl apply -f demoappbackend.yaml -n ${NAMESPACE}
+                            fi
+                        '''
+
+
+                    }
+            }
+        }
+
+    }
+    post {
+        success {
+            slackSend  color: "#439FE0", message: "Build Sucess Project - ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        }
+        failure {
+            slackSend failOnError:true, color: "#A30200", message: "Build Failed Project-  #${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        }
+    }
+
+}

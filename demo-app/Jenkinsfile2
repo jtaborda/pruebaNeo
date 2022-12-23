@@ -1,0 +1,78 @@
+def execUpdatePodV1 () {
+    echo "Running tests in pruebita"
+	ID = "126"
+	script {
+	    // Get deployment's service IP
+		def svc_ip = sh (
+		    returnStdout: true,
+			script: "kubectl get svc -n default | grep ${ID} | awk '{print \$3}'"
+		)
+
+		if (svc_ip.equals('')) {
+		    echo "ERROR: Getting service IP failed"
+			sh 'exit 1'
+		}
+		echo "svc_ip is ${svc_ip}"
+		url = 'http://' + svc_ip
+	}
+}
+
+def execUpdatePodV2 () {
+    echo "Running tests deploy"
+    VERSION_APP = "0.0.1"
+    DEMO = "coredns"
+    script {
+            // Get deployment's service IP
+            def deploy_name = sh (
+                script: "kubectl get deploy | awk '{print \$1}' | grep demo-app",
+                returnStdout: true
+            )
+
+            echo "texto is ${deploy_name}"
+
+            if (deploy_name.equals('')) {
+                echo "ERROR: No se puede ejecutar nada"
+                sh 'exit 1'
+            }
+
+            echo "Si hay algo en la variable"
+    }
+}
+
+pipeline {
+    agent any
+    environment {
+        VERSION_APP    = '0.0.1'
+        APP = "demo-app"
+    }
+    tools {
+        maven 'maven 3.8.6'
+    }
+
+    stages {
+        
+        stage('Deploy demo App') {
+                    steps {
+                        script{
+                            withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'Token_Kubernetes', serverUrl: 'https://172.16.0.152:18443']]) {
+                                // Get deployment's service IP
+                                def deploy_name = sh (
+                                    script: "kubectl get deploy | awk '{print \$1}' | grep ${APP}",
+                                    returnStdout: true
+                                )
+                                if (deploy_name.equals('')) {
+                                    echo "ESTOY VACIO"
+                                	sh 'exit 1'
+                                }
+                                echo "texto is ${deploy_name}"
+                                echo "NO ESTOY VACIO"
+                                sh "kubectl set image deployment demo-app-back-deployment-jenkis demo-app-back-jenkis=chapumix/demo-app:${VERSION_APP}"
+                                sh "kubectl rollout restart deployment demo-app-back-deployment-jenkis"
+                            }
+                        }
+
+                    }
+                }
+    }
+    
+}

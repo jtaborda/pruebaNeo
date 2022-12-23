@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app-back-deployment-jenkis
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-app-back-jenkis
+  template:
+    metadata:
+      labels:
+        app: demo-app-back-jenkis
+    spec:
+      containers:
+        - name: demo-app-back-jenkis
+          image: chapumix/demo-app:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 7280
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: demo-app-back-service-jenkis
+  labels:
+    app: demo-app-back-jenkis
+spec:
+  ports:
+    - name: demo-app-back-jenkis
+      port: 7280
+      nodePort : 31780
+  #type: LoadBalancer
+  type: NodePort
+  selector:
+    app: demo-app-back-jenkis

@@ -1,0 +1,90 @@
+pipeline {
+    agent any
+    environment {
+        VERSION_APP = '0.0.1'
+        NAME_APP = 'demo-app'
+        NAME_DOCKERHUB = 'chapumix/demo-app'
+        NAMESPACE = 'default'
+    }
+    tools {
+        maven 'maven 3.8.6'
+    }
+
+    stages {
+
+        stage('Verificación SCM') {
+          steps {
+            script {
+              checkout scm
+              sh "git rev-parse --short HEAD > .git/commit-id"  
+            }
+          }  
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                }
+            }    
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                script{
+                    def scannerHome = tool 'sonarqube 4.7.0.247';
+                    withSonarQubeEnv('sonarqube') {
+                        sh "${scannerHome}/bin/sonar-scanner -e -Dsonar.projectName=${NAME_APP} -Dsonar.projectVersion=${env.BUILD_NUMBER} -Dsonar.projectKey=${NAME_APP} -Dsonar.sources=src/main/ -Dsonar.language=java -Dsonar.java.binaries=."
+                    }
+                }
+            }
+        }
+        
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Docker Build & Push') {
+          steps {
+            script {  
+				  docker.withRegistry('https://registry.hub.docker.com', 'Docker_Hub_Token') {
+                    def appmavenjenkins = docker.build("${NAME_DOCKERHUB}:${VERSION_APP}", ".")
+					appmavenjenkins.push()
+				  }
+				} 
+          }   
+        }
+
+        stage('Deploy demo App') {
+            steps {
+                withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'Token_Kubernetes', serverUrl: 'https://172.16.0.152:18443']]) {
+                    sh '''
+                        if kubectl get deployments | grep ${NAME_APP}
+                            then
+                                kubectl set image deployment demo-app-back-deployment-jenkis demo-app-back-jenkis=chapumix/demo-app:${VERSION_APP}
+                                kubectl rollout restart deployment demo-app-back-deployment-jenkis
+                            else
+                                kubectl apply -f demoappbackend.yaml -n ${NAMESPACE}
+                        fi
+                    '''
+                }
+
+            }
+        }
+
+    }
+    post {
+        success {
+            slackSend  color: "#439FE0", message: "Build Sucess Project - ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        }
+        failure {
+            slackSend failOnError:true, color: "#A30200", message: "Build Failed Project-  #${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        }
+    }
+    
+}
