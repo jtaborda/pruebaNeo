@@ -1,0 +1,174 @@
+
+<div id="Modal" class="modal" style="display: block;">
+    <div class="modal-content-medium">
+      <div class="modal-header grey">
+        <h2>{{textCreaEdit}}</h2>
+        </div>
+        <div class="modal-body scrolled-medium">
+            <form class="formApp" [formGroup]="itemForm">
+
+                <div class="form-group"  
+                [class]="!itemForm.controls['nombre'].pristine && itemForm.controls['nombre'].errors ? 'invalidForm' : ''">
+                    
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr;">
+                        <div><input class="form-control" formControlName="nombre" id="nombre" type="text"  maxlength="55"  placeholder="Nombre"/>
+                            <div class="helper-text d-flex">
+                              <div class="error-message">
+                                <p *ngIf="!itemForm.controls['nombre'].pristine && itemForm.controls['nombre'].hasError('required')">
+                                  Ingrese nombre
+                                </p>
+                                <p *ngIf="!itemForm.controls['nombre'].pristine && itemForm.controls['nombre'].hasError('minlength')">
+                                  Minimo 3 caracteres
+                                </p>
+          
+                              </div>
+                              <div class="error-message">
+                                <p class="fz-12px ta-right">
+                                  {{ itemForm.controls["nombre"].value.length }}/55
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                        <div><input class="form-control" formControlName="identificacion" id="identificacion" type="text"  maxlength="55"  placeholder="Identificacion"/>
+                            <div class="helper-text d-flex">
+                              <div class="error-message">
+                                <p *ngIf="!itemForm.controls['identificacion'].pristine && itemForm.controls['identificacion'].hasError('required')">
+                                  Ingrese identificacion
+                                </p>
+                                <p *ngIf="!itemForm.controls['identificacion'].pristine && itemForm.controls['identificacion'].hasError('minlength')">
+                                  Ingrese al menos 3 caracteres
+                                </p>
+          
+                              </div>
+                              <div class="error-message">
+                                <p class="fz-12px ta-right">
+                                  {{ itemForm.controls["identificacion"].value.length }}/55
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                        <div><input class="form-control" formControlName="edad" id="edad" type="text"  maxlength="55"  placeholder="Edad"/>
+                            <div class="helper-text d-flex">
+                              <div class="error-message">
+                                <p *ngIf="!itemForm.controls['edad'].pristine && itemForm.controls['edad'].hasError('required')">
+                                  Ingrese nombre
+                                </p>
+                                <p *ngIf="!itemForm.controls['edad'].pristine && itemForm.controls['edad'].hasError('minlength')">
+                                  Ingrese al menos 3 caracteres para el campo de texto
+                                </p>
+          
+                              </div>
+                              <div class="error-message">
+                                <p class="fz-12px ta-right">
+                                  {{ itemForm.controls["edad"].value.length }}/55
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                        <div><input class="form-control" formControlName="genero" id="genero" type="text"  maxlength="55"  placeholder="Genero"/>
+
+                            <div class="helper-text d-flex">
+                              <div class="error-message">
+                                <p *ngIf="!itemForm.controls['genero'].pristine && itemForm.controls['genero'].hasError('required')">
+                                  Ingrese nombre
+                                </p>
+                                <p *ngIf="!itemForm.controls['genero'].pristine && itemForm.controls['genero'].hasError('minlength')">
+                                  Ingrese al menos 3 caracteres para el campo de texto
+                                </p>
+          
+                              </div>
+                              <div class="error-message">
+                                <p class="fz-12px ta-right">
+                                  {{ itemForm.controls["genero"].value.length }}/55
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                      
+                        <div><input class="form-control" formControlName="direccion" id="direccion" type="text"  maxlength="55"  placeholder="Direccion"/>
+                            <div class="helper-text d-flex">
+                              <div class="error-message">
+                                <p *ngIf="!itemForm.controls['direccion'].pristine && itemForm.controls['direccion'].hasError('required')">
+                                  Ingrese genero
+                                </p>
+                                <p *ngIf="!itemForm.controls['direccion'].pristine && itemForm.controls['direccion'].hasError('minlength')">
+                                  Minimo 3 caracteres
+                                </p>
+          
+                              </div>
+                              <div class="error-message">
+                                <p class="fz-12px ta-right">
+                                  {{ itemForm.controls["direccion"].value.length }}/55
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                        <div><input class="form-control" formControlName="telefono" id="telefono" type="text"  maxlength="55"  placeholder="telefono"/>
+                            <div class="helper-text d-flex">
+                              <div class="error-message">
+                                <p *ngIf="!itemForm.controls['telefono'].pristine && itemForm.controls['telefono'].hasError('required')">
+                                  Ingrese telefono
+                                </p>
+                                <p *ngIf="!itemForm.controls['telefono'].pristine && itemForm.controls['telefono'].hasError('minlength')">
+                                  Ingrese al menos 3 caracteres
+                                </p>
+          
+                              </div>
+                              <div class="error-message">
+                                <p class="fz-12px ta-right">
+                                  {{ itemForm.controls["telefono"].value.length }}/55
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                        <div><input class="form-control" formControlName="contrasena" id="contrasena" type="text"  maxlength="55"  placeholder="Contrasena"/>
+                            <div class="helper-text d-flex">
+                              <div class="error-message">
+                                <p *ngIf="!itemForm.controls['contrasena'].pristine && itemForm.controls['contrasena'].hasError('required')">
+                                  Ingrese nombre
+                                </p>
+                                <p *ngIf="!itemForm.controls['contrasena'].pristine && itemForm.controls['contrasena'].hasError('minlength')">
+                                  Ingrese al menos 3 caracteres
+                                </p>
+          
+                              </div>
+                              <div class="error-message">
+                                <p class="fz-12px ta-right">
+                                  {{ itemForm.controls["contrasena"].value.length }}/55
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                        <div><input class="form-control" formControlName="estado" id="estado" type="text"  maxlength="55"  placeholder="estado"/>
+
+                            <div class="helper-text d-flex">
+                              <div class="error-message">
+                                <p *ngIf="!itemForm.controls['estado'].pristine && itemForm.controls['estado'].hasError('required')">
+                                  Ingrese nombre
+                                </p>
+                                <p *ngIf="!itemForm.controls['estado'].pristine && itemForm.controls['estado'].hasError('minlength')">
+                                  Ingrese al menos 3 caracteres para el campo de texto
+                                </p>
+          
+                              </div>
+                              <div class="error-message">
+                                <p class="fz-12px ta-right">
+                                  {{ itemForm.controls["estado"].value.length }}/55
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                    
+                    </div>
+
+                  </div>
+        </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-text" (click)="closeModal()">Cancelar</button>
+            <button class="btn-primary-purple" (click)="create()" *ngIf="this.crea==1">Crear</button>    
+            <button class="btn-primary-purple" (click)="update()" *ngIf="this.element?.insertOrEdit==1">Guardar</button>          
+          </div>
+        </div>
+</div>
+
